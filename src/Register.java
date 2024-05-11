@@ -1,13 +1,9 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.ArrayList;
 
-public class Register implements KeyListener {
+public class Register extends KeyLogger {
 
-    ArrayList<Long> startTime = new ArrayList<>();
-    ArrayList<Long> endTime = new ArrayList<>();
     ArrayList<Long> intervals = new ArrayList<>();
     ArrayList<Long> dwellIntervals = new ArrayList<>();
 
@@ -15,7 +11,6 @@ public class Register implements KeyListener {
     private TextField usernameInput;
     private TextField passwordInput;
     private TextField passwordReenterInput;
-    private Label alert;
 
     void startRegisterUI() {
         registerFrame.setSize(new Dimension(700, 600));
@@ -29,10 +24,8 @@ public class Register implements KeyListener {
         username.add(Box.createHorizontalGlue());
         Label usernameLabel = new Label("Enter username:");
         usernameInput = new TextField(20);
-        Label usernameInfo = new Label("");
         username.add(usernameLabel, BorderLayout.WEST);
         username.add(usernameInput);
-        username.add(usernameInfo);
 
         //password UI
         JPanel password = new JPanel();
@@ -48,7 +41,7 @@ public class Register implements KeyListener {
         passwordReenter.setLayout(new BoxLayout(passwordReenter, BoxLayout.LINE_AXIS));
         passwordReenter.add(Box.createHorizontalGlue());
         Label passwordReenterLabel = new Label("Enter password again:");
-        passwordReenterInput = new TextField(20);
+        passwordReenterInput = new TextField(22);
         passwordReenterInput.addKeyListener(this);
         passwordReenter.add(passwordReenterLabel);
         passwordReenter.add(passwordReenterInput);
@@ -64,7 +57,7 @@ public class Register implements KeyListener {
 
             for(int j = 0; j < endTime.size(); j++) {
                 intervals.add(endTime.get(j) - startTime.get(j));
-                if(j != endTime.size() - 1) {
+                if(j < endTime.size() - 1) {
                     dwellIntervals.add(startTime.get(j + 1) - endTime.get(j));
                 }
             }
@@ -85,38 +78,33 @@ public class Register implements KeyListener {
             endTime.clear();
         });
 
+        JButton back = new JButton("Back");
+        back.addActionListener(e -> {
+            startTime.clear();
+            endTime.clear();
+            intervals.clear();
+            dwellIntervals.clear();
+            registerFrame.setVisible(false);
+            registerFrame.dispose();
+            UI.startUI();
+        });
+
         //add all components to panel
         JPanel registerComponents = new JPanel();
+        JPanel buttons = new JPanel();
+        buttons.setLayout(new GridLayout(1, 0));
+        buttons.add(back);
+        buttons.add(register);
         registerComponents.setLayout(new GridLayout(0,1));
         registerComponents.add(username);
         registerComponents.add(password);
         registerComponents.add(passwordReenter);
         registerComponents.add(info);
         registerComponents.add(alert);
-        registerComponents.add(register);
+        registerComponents.add(buttons);
 
         registerFrame.add(registerComponents);
         registerFrame.pack();
         registerFrame.setVisible(true);
-    }
-
-    @Override
-    public void keyPressed(KeyEvent e) {
-        startTime.add(System.currentTimeMillis());
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-        endTime.add(System.currentTimeMillis());
-    }
-
-    @Override
-    public void keyTyped(KeyEvent e) {
-        int keyCode = e.getKeyCode();
-        if(keyCode == 8 || keyCode == 127) {
-            alert.setText("Please delete all inputs!");
-            startTime.clear();
-            endTime.clear();
-        }
     }
 }

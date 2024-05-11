@@ -1,18 +1,15 @@
 import javax.swing.*;
 import java.awt.*;
 
-public class Login extends KeyLogger {
-
-    UI loginFrame = new UI("Login System Demo");
+public class Delete extends KeyLogger {
+    UI deleteFrame = new UI("Login System Demo");
     private TextField usernameInput;
     private TextField passwordInput;
 
-
-    void startLoginUI() {
-        loginFrame.setSize(new Dimension(700, 600));
-        loginFrame.setResizable(false);
-        loginFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+    void startDeleteUI() {
+        deleteFrame.setSize(new Dimension(700, 600));
+        deleteFrame.setResizable(false);
+        deleteFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         //username UI
         JPanel username = new JPanel();
@@ -37,11 +34,9 @@ public class Login extends KeyLogger {
         //password enter logic
         Label info = new Label("The entered password has to be entered in one go, without mistakes, for security reasons. If a mistake happens, delete the whole input and start again");
         alert = new Label("");
-        JButton login = new JButton("Complete login");
-        login.addActionListener(e -> {
-            boolean checkUsername = Database.checkUsername(usernameInput.getText());
+        JButton delete = new JButton("Delete");
+        delete.addActionListener(e -> {
             String finalPassword = passwordInput.getText();
-
             for(int j = 0; j < endTime.size(); j++) {
                 intervals.add(endTime.get(j) - startTime.get(j));
                 if(j < endTime.size() - 1) {
@@ -49,34 +44,36 @@ public class Login extends KeyLogger {
                 }
             }
             User user = Database.getUser(usernameInput.getText());
-            if(checkUsername) {
-                alert.setText("Username does not exist!");
+            if(user != null && !user.username().equals(UI.currUser.username())) {
+                alert.setText("You can only delete the user you're logged in as!");
             } else if(usernameInput.getText().isEmpty() || finalPassword.isEmpty()) {
                 alert.setText("All boxes need to be filled!");
             } else if(user != null && !finalPassword.equals(user.password())) {
                 alert.setText("Entered password wrong!");
-            } else if(user != null) {
-                boolean access = true;
+            } else if(user != null){
+                boolean remove = true;
                 int counter = 0;
-
                 for (int i = 0; i < intervals.size(); i++) {
                     if (intervals.get(i) > user.timeIntervals().get(i) + 30 || intervals.get(i) < user.timeIntervals().get(i) - 30) {
                         counter++;
                     }
                 }
-
                 for(int j = 0; j < dwellIntervals.size(); j++) {
                     if (dwellIntervals.get(j) > user.dwellIntervals().get(j) + 30 || dwellIntervals.get(j) < user.dwellIntervals().get(j) - 30) {
                         counter++;
                     }
                 }
-
                 if(counter > intervals.size()*0.2) {
-                    alert.setText("Access denied!");
-                    access = false;
+                    alert.setText("Delete denied!");
+                    remove = false;
                 }
-
-                if(access) {
+                if(remove) {
+                    for(int i = 0; i < Database.users.size(); i++) {
+                        if(Database.users.get(i).username().equals(usernameInput.getText())) {
+                            Database.users.remove(i);
+                            break;
+                        }
+                    }
                     for(User users : Database.users) {
                         if(users.username().equals(usernameInput.getText())) {
                             for(int i = 0; i < users.timeIntervals().size(); i++) {
@@ -89,9 +86,10 @@ public class Login extends KeyLogger {
                         }
                     }
                     UI.currUser = Database.getUser(usernameInput.getText());
-                    loginFrame.setVisible(false);
-                    loginFrame.dispose();
-                    UI.loginStatus = true;
+                    deleteFrame.setVisible(false);
+                    deleteFrame.dispose();
+                    UI.loginStatus = false;
+                    UI.currUser = null;
                     UI.startUI();
                 }
             }
@@ -107,26 +105,26 @@ public class Login extends KeyLogger {
             endTime.clear();
             intervals.clear();
             dwellIntervals.clear();
-            loginFrame.setVisible(false);
-            loginFrame.dispose();
+            deleteFrame.setVisible(false);
+            deleteFrame.dispose();
             UI.startUI();
         });
 
         //add all components to panel
-        JPanel loginComponents = new JPanel();
+        JPanel deleteComponents = new JPanel();
         JPanel buttons = new JPanel();
         buttons.setLayout(new GridLayout(1, 0));
         buttons.add(back);
-        buttons.add(login);
-        loginComponents.setLayout(new GridLayout(0,1));
-        loginComponents.add(username);
-        loginComponents.add(password);
-        loginComponents.add(info);
-        loginComponents.add(alert);
-        loginComponents.add(buttons);
+        buttons.add(delete);
+        deleteComponents.setLayout(new GridLayout(0,1));
+        deleteComponents.add(username);
+        deleteComponents.add(password);
+        deleteComponents.add(info);
+        deleteComponents.add(alert);
+        deleteComponents.add(buttons);
 
-        loginFrame.add(loginComponents);
-        loginFrame.pack();
-        loginFrame.setVisible(true);
+        deleteFrame.add(deleteComponents);
+        deleteFrame.pack();
+        deleteFrame.setVisible(true);
     }
 }
