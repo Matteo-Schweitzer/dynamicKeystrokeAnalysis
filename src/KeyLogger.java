@@ -6,8 +6,8 @@ import java.util.ArrayList;
 public class KeyLogger implements KeyListener {
     ArrayList<Long> startTime = new ArrayList<>();
     ArrayList<Long> endTime = new ArrayList<>();
-    ArrayList<Long> intervals = new ArrayList<>();
     ArrayList<Long> dwellIntervals = new ArrayList<>();
+    ArrayList<Long> flightIntervals = new ArrayList<>();
     Label alert = new Label("");
 
     @Override
@@ -31,6 +31,7 @@ public class KeyLogger implements KeyListener {
         int keyCode = e.getExtendedKeyCode();
         if(keyCode == 8 || keyCode == 127) {
             alert.setText("Please delete all inputs!");
+            Database.passwordInput.setText("");
             startTime.clear();
             endTime.clear();
         }

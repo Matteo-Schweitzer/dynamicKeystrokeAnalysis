@@ -5,14 +5,13 @@ public class Login extends KeyLogger {
 
     UI loginFrame = new UI("Login System Demo");
     private TextField usernameInput;
-    private TextField passwordInput;
 
 
     void startLoginUI() {
         loginFrame.setSize(new Dimension(700, 600));
         loginFrame.setResizable(false);
         loginFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+        loginFrame.addWindowListener(new WindowOperations());
 
         //username UI
         JPanel username = new JPanel();
@@ -28,10 +27,10 @@ public class Login extends KeyLogger {
         password.setLayout(new BoxLayout(password, BoxLayout.LINE_AXIS));
         password.add(Box.createHorizontalGlue());
         Label passwordLabel = new Label("Enter password:");
-        passwordInput = new TextField(20);
-        passwordInput.addKeyListener(this);
+        Database.passwordInput = new TextField(20);
+        Database.passwordInput.addKeyListener(this);
         password.add(passwordLabel);
-        password.add(passwordInput);
+        password.add(Database.passwordInput);
 
 
         //password enter logic
@@ -40,12 +39,12 @@ public class Login extends KeyLogger {
         JButton login = new JButton("Complete login");
         login.addActionListener(e -> {
             boolean checkUsername = Database.checkUsername(usernameInput.getText());
-            String finalPassword = passwordInput.getText();
+            String finalPassword = Database.passwordInput.getText();
 
             for(int j = 0; j < endTime.size(); j++) {
-                intervals.add(endTime.get(j) - startTime.get(j));
+                dwellIntervals.add(endTime.get(j) - startTime.get(j));
                 if(j < endTime.size() - 1) {
-                    dwellIntervals.add(startTime.get(j + 1) - endTime.get(j));
+                    flightIntervals.add(startTime.get(j + 1) - endTime.get(j));
                 }
             }
             User user = Database.getUser(usernameInput.getText());
@@ -57,33 +56,32 @@ public class Login extends KeyLogger {
                 alert.setText("Entered password wrong!");
             } else if(user != null) {
                 boolean access = true;
-                int counter = 0;
 
-                for (int i = 0; i < intervals.size(); i++) {
-                    if (intervals.get(i) > user.timeIntervals().get(i) + 30 || intervals.get(i) < user.timeIntervals().get(i) - 30) {
-                        counter++;
+                for (int i = 0; i < dwellIntervals.size(); i++) {
+                    if (dwellIntervals.get(i) > user.dwellIntervals().get(i) + 30 || dwellIntervals.get(i) < user.dwellIntervals().get(i) - 30) {
+                        alert.setText("Access denied!");
+                        access = false;
+                        break;
                     }
                 }
-
-                for(int j = 0; j < dwellIntervals.size(); j++) {
-                    if (dwellIntervals.get(j) > user.dwellIntervals().get(j) + 30 || dwellIntervals.get(j) < user.dwellIntervals().get(j) - 30) {
-                        counter++;
+                if(access) {
+                    for(int j = 0; j < flightIntervals.size(); j++) {
+                        if (flightIntervals.get(j) > user.flightIntervals().get(j) + 30 || flightIntervals.get(j) < user.flightIntervals().get(j) - 30) {
+                            alert.setText("Access denied!");
+                            access = false;
+                            break;
+                        }
                     }
-                }
-
-                if(counter > intervals.size()*0.2) {
-                    alert.setText("Access denied!");
-                    access = false;
                 }
 
                 if(access) {
                     for(User users : Database.users) {
                         if(users.username().equals(usernameInput.getText())) {
-                            for(int i = 0; i < users.timeIntervals().size(); i++) {
-                                users.timeIntervals().set(i, (users.timeIntervals().get(i) + intervals.get(i))/2);
-                            }
                             for(int i = 0; i < users.dwellIntervals().size(); i++) {
                                 users.dwellIntervals().set(i, (users.dwellIntervals().get(i) + dwellIntervals.get(i))/2);
+                            }
+                            for(int i = 0; i < users.flightIntervals().size(); i++) {
+                                users.flightIntervals().set(i, (users.flightIntervals().get(i) + flightIntervals.get(i))/2);
                             }
                             break;
                         }
@@ -97,22 +95,21 @@ public class Login extends KeyLogger {
             }
             startTime.clear();
             endTime.clear();
-            intervals.clear();
             dwellIntervals.clear();
+            flightIntervals.clear();
         });
 
         JButton back = new JButton("Back");
         back.addActionListener(e -> {
             startTime.clear();
             endTime.clear();
-            intervals.clear();
             dwellIntervals.clear();
+            flightIntervals.clear();
             loginFrame.setVisible(false);
             loginFrame.dispose();
             UI.startUI();
         });
 
-        //add all components to panel
         JPanel loginComponents = new JPanel();
         JPanel buttons = new JPanel();
         buttons.setLayout(new GridLayout(1, 0));

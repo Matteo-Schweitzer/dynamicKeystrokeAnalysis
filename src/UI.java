@@ -12,15 +12,18 @@ public class UI extends JFrame {
     }
 
     public static void main(String[] args) {
+        Database.loadData();
         startUI();
     }
 
     static void startUI() {
+
         UI mainFrame = new UI("Login System Demo");
         alert.setText("");
         mainFrame.setPreferredSize(new Dimension(300, 300));
         mainFrame.setResizable(false);
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        mainFrame.addWindowListener(new WindowOperations());
 
         JButton loginButton = new JButton("Login with existing user");
         loginButton.addActionListener(e -> {
@@ -65,7 +68,10 @@ public class UI extends JFrame {
         });
 
         JButton exitButton = new JButton("Exit program");
-        exitButton.addActionListener(e -> System.exit(0));
+        exitButton.addActionListener(e -> {
+            Database.saveData();
+            System.exit(0);
+        });
 
         if(loginStatus) {
             loginStatusLabel.setText("Logged in as: " + currUser.username());

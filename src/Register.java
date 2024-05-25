@@ -4,19 +4,18 @@ import java.util.ArrayList;
 
 public class Register extends KeyLogger {
 
-    ArrayList<Long> intervals = new ArrayList<>();
     ArrayList<Long> dwellIntervals = new ArrayList<>();
+    ArrayList<Long> flightIntervals = new ArrayList<>();
 
     UI registerFrame = new UI("Login System Demo");
     private TextField usernameInput;
-    private TextField passwordInput;
-    private TextField passwordReenterInput;
+    private TextField chosenPassword;
 
     void startRegisterUI() {
         registerFrame.setSize(new Dimension(700, 600));
         registerFrame.setResizable(false);
         registerFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+        registerFrame.addWindowListener(new WindowOperations());
 
         //username UI
         JPanel username = new JPanel();
@@ -32,19 +31,19 @@ public class Register extends KeyLogger {
         password.setLayout(new BoxLayout(password, BoxLayout.LINE_AXIS));
         password.add(Box.createHorizontalGlue());
         Label passwordLabel = new Label("Enter password:");
-        passwordInput = new TextField(20);
+        chosenPassword = new TextField(20);
         password.add(passwordLabel);
-        password.add(passwordInput);
+        password.add(chosenPassword);
 
         //password reenter UI
         JPanel passwordReenter = new JPanel();
         passwordReenter.setLayout(new BoxLayout(passwordReenter, BoxLayout.LINE_AXIS));
         passwordReenter.add(Box.createHorizontalGlue());
         Label passwordReenterLabel = new Label("Enter password again:");
-        passwordReenterInput = new TextField(22);
-        passwordReenterInput.addKeyListener(this);
+        Database.passwordInput = new TextField(22);
+        Database.passwordInput.addKeyListener(this);
         passwordReenter.add(passwordReenterLabel);
-        passwordReenter.add(passwordReenterInput);
+        passwordReenter.add(Database.passwordInput);
 
         //password reenter logic
         Label info = new Label("The re-entered password has to be entered in one go, without mistakes, for security reasons. If a mistake happens, delete the whole input and start again");
@@ -52,13 +51,13 @@ public class Register extends KeyLogger {
         JButton register = new JButton("Complete registration");
         register.addActionListener(e -> {
             boolean checkUsername = Database.checkUsername(usernameInput.getText());
-            String finalPassword = passwordInput.getText();
-            String finalReenterPassword = passwordReenterInput.getText();
+            String finalPassword = chosenPassword.getText();
+            String finalReenterPassword = Database.passwordInput.getText();
 
             for(int j = 0; j < endTime.size(); j++) {
-                intervals.add(endTime.get(j) - startTime.get(j));
+                dwellIntervals.add(endTime.get(j) - startTime.get(j));
                 if(j < endTime.size() - 1) {
-                    dwellIntervals.add(startTime.get(j + 1) - endTime.get(j));
+                    flightIntervals.add(startTime.get(j + 1) - endTime.get(j));
                 }
             }
 
@@ -68,8 +67,10 @@ public class Register extends KeyLogger {
                 alert.setText("All boxes need to be filled!");
             } else if(!finalPassword.equals(finalReenterPassword)) {
                 alert.setText("Re-entered password wrong!");
+            } else if (finalPassword.contains(" ")) {
+                alert.setText("Password must not contain spaces!");
             } else {
-                Database.users.add(new User(usernameInput.getText(), finalPassword, intervals, dwellIntervals));
+                Database.users.add(new User(usernameInput.getText(), finalPassword, dwellIntervals, flightIntervals));
                 registerFrame.setVisible(false);
                 registerFrame.dispose();
                 UI.startUI();
@@ -82,8 +83,8 @@ public class Register extends KeyLogger {
         back.addActionListener(e -> {
             startTime.clear();
             endTime.clear();
-            intervals.clear();
             dwellIntervals.clear();
+            flightIntervals.clear();
             registerFrame.setVisible(false);
             registerFrame.dispose();
             UI.startUI();
