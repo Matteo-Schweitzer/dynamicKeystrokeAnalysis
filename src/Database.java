@@ -7,6 +7,7 @@ import java.util.List;
 public class Database {
     static List<User> users = new ArrayList<>();
     static TextField passwordInput;
+    static private final String USERDATA = "src/users.txt";
 
     static boolean checkUsername(String usernameInput) {
         if(usernameInput.contains(" ")) {
@@ -30,8 +31,7 @@ public class Database {
     }
 
     static void saveData() {
-        String users = "src/users.txt";
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(users)))
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(USERDATA)))
         {
             for(User user : Database.users) {
                 writer.write(user.username() + " " + user.password());
@@ -52,12 +52,11 @@ public class Database {
     }
 
     static void loadData() {
-        String users = "src/users.txt";
         String usernamePassword = "";
         String dwellInterval = " ";
         String flightInterval = " ";
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(users))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(USERDATA))) {
             String input = reader.readLine();
             int i = 0;
             while(input != null) {
@@ -96,8 +95,5 @@ public class Database {
         } catch (IOException e) {
             System.out.println("Loading data not successful!");
         }
-        /*for(User user: Database.users) {
-            System.out.println(user);
-        }*/
     }
 }
