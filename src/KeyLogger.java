@@ -9,11 +9,15 @@ public class KeyLogger implements KeyListener {
     ArrayList<Long> dwellIntervals = new ArrayList<>();
     ArrayList<Long> flightIntervals = new ArrayList<>();
     Label alert = new Label("");
+    private final int BACKSPACE = 8;
+    private final int DELETE = 127;
+    private final int SHIFT = 16;
+    private final int CAPSLOCK = 20;
 
     @Override
     public void keyPressed(KeyEvent e) {
         int keyCode = e.getExtendedKeyCode();
-        if(keyCode != 8 && keyCode != 127 && keyCode != 16) {
+        if(keyCode != BACKSPACE && keyCode != DELETE && keyCode != SHIFT && keyCode != CAPSLOCK) {
             startTime.add(System.currentTimeMillis());
         }
     }
@@ -21,7 +25,7 @@ public class KeyLogger implements KeyListener {
     @Override
     public void keyReleased(KeyEvent e) {
         int keyCode = e.getExtendedKeyCode();
-        if(keyCode != 8 && keyCode != 127 && keyCode != 16) {
+        if(keyCode != BACKSPACE && keyCode != DELETE && keyCode != SHIFT && keyCode != CAPSLOCK) {
             endTime.add(System.currentTimeMillis());
         }
     }
@@ -29,7 +33,7 @@ public class KeyLogger implements KeyListener {
     @Override
     public void keyTyped(KeyEvent e) {
         int keyCode = e.getExtendedKeyCode();
-        if(keyCode == 8 || keyCode == 127) {
+        if(keyCode == BACKSPACE || keyCode == DELETE) {
             alert.setText("Please delete all inputs!");
             Database.passwordInput.setText("");
             startTime.clear();

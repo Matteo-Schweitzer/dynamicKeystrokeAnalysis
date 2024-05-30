@@ -47,7 +47,7 @@ public class Database {
                 writer.newLine();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Saving data not successful!");
         }
     }
 
@@ -94,10 +94,10 @@ public class Database {
                 input = reader.readLine();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Loading data not successful!");
         }
-        for(User user: Database.users) {
+        /*for(User user: Database.users) {
             System.out.println(user);
-        }
+        }*/
     }
 }

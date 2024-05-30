@@ -53,36 +53,31 @@ public class Delete extends KeyLogger {
                 alert.setText("Entered password wrong!");
             } else if(user != null){
                 boolean remove = true;
-                int counter = 0;
                 for (int i = 0; i < dwellIntervals.size(); i++) {
                     if (dwellIntervals.get(i) > user.dwellIntervals().get(i) + 30 || dwellIntervals.get(i) < user.dwellIntervals().get(i) - 30) {
-                        counter++;
+                        alert.setText("Delete denied!");
+                        Database.passwordInput.setText("");
+                        startTime.clear();
+                        endTime.clear();
+                        remove = false;
+                        break;
                     }
                 }
                 for(int j = 0; j < flightIntervals.size(); j++) {
                     if (flightIntervals.get(j) > user.flightIntervals().get(j) + 30 || flightIntervals.get(j) < user.flightIntervals().get(j) - 30) {
-                        counter++;
+                        alert.setText("Delete denied!");
+                        Database.passwordInput.setText("");
+                        startTime.clear();
+                        endTime.clear();
+                        remove = false;
+                        break;
                     }
                 }
-                if(counter > dwellIntervals.size()*0.2) {
-                    alert.setText("Delete denied!");
-                    remove = false;
-                }
+
                 if(remove) {
                     for(int i = 0; i < Database.users.size(); i++) {
                         if(Database.users.get(i).username().equals(usernameInput.getText())) {
                             Database.users.remove(i);
-                            break;
-                        }
-                    }
-                    for(User users : Database.users) {
-                        if(users.username().equals(usernameInput.getText())) {
-                            for(int i = 0; i < users.dwellIntervals().size(); i++) {
-                                users.dwellIntervals().set(i, (users.dwellIntervals().get(i) + dwellIntervals.get(i))/2);
-                            }
-                            for(int i = 0; i < users.flightIntervals().size(); i++) {
-                                users.flightIntervals().set(i, (users.flightIntervals().get(i) + flightIntervals.get(i))/2);
-                            }
                             break;
                         }
                     }

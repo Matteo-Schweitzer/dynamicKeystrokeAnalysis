@@ -5,7 +5,8 @@ public class Login extends KeyLogger {
 
     UI loginFrame = new UI("Login System Demo");
     private TextField usernameInput;
-
+    private final int DWELL_THRESHOLD = 45;
+    private final int FLIGHT_THRESHOLD = 50;
 
     void startLoginUI() {
         loginFrame.setSize(new Dimension(700, 600));
@@ -58,16 +59,22 @@ public class Login extends KeyLogger {
                 boolean access = true;
 
                 for (int i = 0; i < dwellIntervals.size(); i++) {
-                    if (dwellIntervals.get(i) > user.dwellIntervals().get(i) + 30 || dwellIntervals.get(i) < user.dwellIntervals().get(i) - 30) {
+                    if (dwellIntervals.get(i) > user.dwellIntervals().get(i) + DWELL_THRESHOLD || dwellIntervals.get(i) < user.dwellIntervals().get(i) - DWELL_THRESHOLD) {
                         alert.setText("Access denied!");
+                        Database.passwordInput.setText("");
+                        startTime.clear();
+                        endTime.clear();
                         access = false;
                         break;
                     }
                 }
                 if(access) {
                     for(int j = 0; j < flightIntervals.size(); j++) {
-                        if (flightIntervals.get(j) > user.flightIntervals().get(j) + 30 || flightIntervals.get(j) < user.flightIntervals().get(j) - 30) {
+                        if (flightIntervals.get(j) > user.flightIntervals().get(j) + FLIGHT_THRESHOLD || flightIntervals.get(j) < user.flightIntervals().get(j) - FLIGHT_THRESHOLD) {
                             alert.setText("Access denied!");
+                            Database.passwordInput.setText("");
+                            startTime.clear();
+                            endTime.clear();
                             access = false;
                             break;
                         }
