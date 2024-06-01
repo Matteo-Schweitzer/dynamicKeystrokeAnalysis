@@ -5,8 +5,8 @@ public class Login extends KeyLogger {
 
     UI loginFrame = new UI("Login System Demo");
     private TextField usernameInput;
-    private final int DWELL_THRESHOLD = 45;
-    private final int FLIGHT_THRESHOLD = 50;
+    private final int DWELL_THRESHOLD = 80;
+    private final int FLIGHT_THRESHOLD = 120;
 
     void startLoginUI() {
         loginFrame.setSize(new Dimension(700, 600));

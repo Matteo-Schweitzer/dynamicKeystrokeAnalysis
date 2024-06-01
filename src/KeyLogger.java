@@ -27,17 +27,15 @@ public class KeyLogger implements KeyListener {
         int keyCode = e.getExtendedKeyCode();
         if(keyCode != BACKSPACE && keyCode != DELETE && keyCode != SHIFT && keyCode != CAPSLOCK) {
             endTime.add(System.currentTimeMillis());
-        }
-    }
-
-    @Override
-    public void keyTyped(KeyEvent e) {
-        int keyCode = e.getExtendedKeyCode();
-        if(keyCode == BACKSPACE || keyCode == DELETE) {
+        } else if(keyCode == BACKSPACE || keyCode == DELETE) {
             alert.setText("Please delete all inputs!");
             Database.passwordInput.setText("");
             startTime.clear();
             endTime.clear();
         }
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
     }
 }
