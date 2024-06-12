@@ -2,7 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class Delete extends KeyLogger {
-    UI deleteFrame = new UI("Login System Demo");
+    Main deleteFrame = new Main("Login System Demo");
     private TextField usernameInput;
 
     void startDeleteUI() {
@@ -12,24 +12,25 @@ public class Delete extends KeyLogger {
         deleteFrame.addWindowListener(new WindowOperations());
 
         //username UI
-        JPanel username = new JPanel();
+        /*JPanel username = new JPanel();
         username.setLayout(new BoxLayout(username, BoxLayout.LINE_AXIS));
         username.add(Box.createHorizontalGlue());
         Label usernameLabel = new Label("Enter username:");
         usernameInput = new TextField(20);
         username.add(usernameLabel, BorderLayout.WEST);
-        username.add(usernameInput);
-
+        username.add(usernameInput);*/
+        JPanel username = UI.createUsernameUI();
         //password UI
-        JPanel password = new JPanel();
+        /*JPanel password = new JPanel();
         password.setLayout(new BoxLayout(password, BoxLayout.LINE_AXIS));
         password.add(Box.createHorizontalGlue());
         Label passwordLabel = new Label("Enter password:");
         Database.passwordInput = new TextField(20);
         Database.passwordInput.addKeyListener(this);
-
         password.add(passwordLabel);
-        password.add(Database.passwordInput);
+        password.add(Database.passwordInput);*/
+        JPanel password = UI.createPasswordUI();
+        Database.passwordInput.addKeyListener(this);
 
 
         //password enter logic
@@ -37,6 +38,7 @@ public class Delete extends KeyLogger {
         alert = new Label("");
         JButton delete = new JButton("Delete");
         delete.addActionListener(e -> {
+            usernameInput = (TextField) username.getComponent(2);
             String finalPassword = Database.passwordInput.getText();
             for(int j = 0; j < endTime.size(); j++) {
                 dwellIntervals.add(endTime.get(j) - startTime.get(j));
@@ -45,7 +47,7 @@ public class Delete extends KeyLogger {
                 }
             }
             User user = Database.getUser(usernameInput.getText());
-            if(user != null && !user.username().equals(UI.currUser.username())) {
+            if(user != null && !user.username().equals(Main.currUser.username())) {
                 alert.setText("You can only delete the user you're logged in as!");
             } else if(usernameInput.getText().isEmpty() || finalPassword.isEmpty()) {
                 alert.setText("All boxes need to be filled!");
@@ -53,6 +55,7 @@ public class Delete extends KeyLogger {
                 alert.setText("Entered password wrong!");
             } else if(user != null){
                 boolean remove = true;
+                //TODO generalise with part from login
                 for (int i = 0; i < dwellIntervals.size(); i++) {
                     if (dwellIntervals.get(i) > user.dwellIntervals().get(i) + 30 || dwellIntervals.get(i) < user.dwellIntervals().get(i) - 30) {
                         alert.setText("Delete denied!");
@@ -81,12 +84,12 @@ public class Delete extends KeyLogger {
                             break;
                         }
                     }
-                    UI.currUser = Database.getUser(usernameInput.getText());
+                    Main.currUser = Database.getUser(usernameInput.getText());
                     deleteFrame.setVisible(false);
                     deleteFrame.dispose();
-                    UI.loginStatus = false;
-                    UI.currUser = null;
-                    UI.startUI();
+                    Main.loginStatus = false;
+                    Main.currUser = null;
+                    Main.startUI();
                 }
             }
             startTime.clear();
@@ -95,7 +98,7 @@ public class Delete extends KeyLogger {
             flightIntervals.clear();
         });
 
-        JButton back = new JButton("Back");
+        /*JButton back = new JButton("Back");
         back.addActionListener(e -> {
             startTime.clear();
             endTime.clear();
@@ -103,8 +106,10 @@ public class Delete extends KeyLogger {
             flightIntervals.clear();
             deleteFrame.setVisible(false);
             deleteFrame.dispose();
-            UI.startUI();
-        });
+            Main.startUI();
+        });*/
+
+        JButton back = new UI().createBackButton(deleteFrame);
 
         //add all components to panel
         JPanel deleteComponents = new JPanel();
@@ -118,6 +123,8 @@ public class Delete extends KeyLogger {
         deleteComponents.add(info);
         deleteComponents.add(alert);
         deleteComponents.add(buttons);
+
+        //JPanel deleteComponents = new UI().generateUI(deleteFrame, delete, info);
 
         deleteFrame.add(deleteComponents);
         deleteFrame.pack();

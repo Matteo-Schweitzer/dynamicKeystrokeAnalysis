@@ -7,7 +7,7 @@ public class Register extends KeyLogger {
     ArrayList<Long> dwellIntervals = new ArrayList<>();
     ArrayList<Long> flightIntervals = new ArrayList<>();
 
-    UI registerFrame = new UI("Login System Demo");
+    Main registerFrame = new Main("Login System Demo");
     private TextField usernameInput;
     private TextField chosenPassword;
 
@@ -18,38 +18,45 @@ public class Register extends KeyLogger {
         registerFrame.addWindowListener(new WindowOperations());
 
         //username UI
-        JPanel username = new JPanel();
+        /*JPanel username = new JPanel();
         username.setLayout(new BoxLayout(username, BoxLayout.LINE_AXIS));
         username.add(Box.createHorizontalGlue());
         Label usernameLabel = new Label("Enter username:");
         usernameInput = new TextField(20);
         username.add(usernameLabel, BorderLayout.WEST);
-        username.add(usernameInput);
+        username.add(usernameInput);*/
+        JPanel username = UI.createUsernameUI();
 
         //password UI
-        JPanel password = new JPanel();
+        /*JPanel password = new JPanel();
         password.setLayout(new BoxLayout(password, BoxLayout.LINE_AXIS));
         password.add(Box.createHorizontalGlue());
         Label passwordLabel = new Label("Enter password:");
         chosenPassword = new TextField(20);
         password.add(passwordLabel);
-        password.add(chosenPassword);
+        password.add(chosenPassword);*/
+        JPanel password = UI.createPasswordUI();
+        //Database.passwordInput.addKeyListener(this);
 
         //password reenter UI
-        JPanel passwordReenter = new JPanel();
+        /*JPanel passwordReenter = new JPanel();
         passwordReenter.setLayout(new BoxLayout(passwordReenter, BoxLayout.LINE_AXIS));
         passwordReenter.add(Box.createHorizontalGlue());
         Label passwordReenterLabel = new Label("Enter password again:");
         Database.passwordInput = new TextField(22);
         Database.passwordInput.addKeyListener(this);
         passwordReenter.add(passwordReenterLabel);
-        passwordReenter.add(Database.passwordInput);
+        passwordReenter.add(Database.passwordInput);*/
+        JPanel passwordReenter = UI.createPasswordReenterUI();
+        Database.passwordInput.addKeyListener(this);
 
         //password reenter logic
         Label info = new Label("The re-entered password has to be entered in one go, without mistakes, for security reasons. If a mistake happens, delete the whole input and start again");
         alert = new Label("");
         JButton register = new JButton("Complete registration");
         register.addActionListener(e -> {
+            usernameInput = (TextField) username.getComponent(2);
+            chosenPassword = (TextField) password.getComponent(2);
             boolean checkUsername = Database.checkUsername(usernameInput.getText());
             String finalPassword = chosenPassword.getText();
             String finalReenterPassword = Database.passwordInput.getText();
@@ -73,13 +80,13 @@ public class Register extends KeyLogger {
                 Database.users.add(new User(usernameInput.getText(), finalPassword, dwellIntervals, flightIntervals));
                 registerFrame.setVisible(false);
                 registerFrame.dispose();
-                UI.startUI();
+                Main.startUI();
             }
             startTime.clear();
             endTime.clear();
         });
 
-        JButton back = new JButton("Back");
+        /*JButton back = new JButton("Back");
         back.addActionListener(e -> {
             startTime.clear();
             endTime.clear();
@@ -87,8 +94,10 @@ public class Register extends KeyLogger {
             flightIntervals.clear();
             registerFrame.setVisible(false);
             registerFrame.dispose();
-            UI.startUI();
-        });
+            Main.startUI();
+        });*/
+
+        JButton back = new UI().createBackButton(registerFrame);
 
         //add all components to panel
         JPanel registerComponents = new JPanel();

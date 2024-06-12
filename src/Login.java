@@ -3,7 +3,7 @@ import java.awt.*;
 
 public class Login extends KeyLogger {
 
-    UI loginFrame = new UI("Login System Demo");
+    Main loginFrame = new Main("Login System Demo");
     private TextField usernameInput;
     private final int DWELL_THRESHOLD = 80;
     private final int FLIGHT_THRESHOLD = 120;
@@ -15,30 +15,32 @@ public class Login extends KeyLogger {
         loginFrame.addWindowListener(new WindowOperations());
 
         //username UI
-        JPanel username = new JPanel();
+        /*JPanel username = new JPanel();
         username.setLayout(new BoxLayout(username, BoxLayout.LINE_AXIS));
         username.add(Box.createHorizontalGlue());
         Label usernameLabel = new Label("Enter username:");
         usernameInput = new TextField(20);
         username.add(usernameLabel, BorderLayout.WEST);
-        username.add(usernameInput);
-
+        username.add(usernameInput);*/
+        JPanel username = UI.createUsernameUI();
         //password UI
-        JPanel password = new JPanel();
+        /*JPanel password = new JPanel();
         password.setLayout(new BoxLayout(password, BoxLayout.LINE_AXIS));
         password.add(Box.createHorizontalGlue());
         Label passwordLabel = new Label("Enter password:");
         Database.passwordInput = new TextField(20);
         Database.passwordInput.addKeyListener(this);
         password.add(passwordLabel);
-        password.add(Database.passwordInput);
-
+        password.add(Database.passwordInput);*/
+        JPanel password = UI.createPasswordUI();
+        Database.passwordInput.addKeyListener(this);
 
         //password enter logic
         Label info = new Label("The entered password has to be entered in one go, without mistakes, for security reasons. If a mistake happens, delete the whole input and start again");
         alert = new Label("");
         JButton login = new JButton("Complete login");
         login.addActionListener(e -> {
+            usernameInput = (TextField) username.getComponent(2);
             boolean checkUsername = Database.checkUsername(usernameInput.getText());
             String finalPassword = Database.passwordInput.getText();
 
@@ -57,7 +59,7 @@ public class Login extends KeyLogger {
                 alert.setText("Entered password wrong!");
             } else if(user != null) {
                 boolean access = true;
-
+                //TODO generalise with part from delete
                 for (int i = 0; i < dwellIntervals.size(); i++) {
                     if (dwellIntervals.get(i) > user.dwellIntervals().get(i) + DWELL_THRESHOLD || dwellIntervals.get(i) < user.dwellIntervals().get(i) - DWELL_THRESHOLD) {
                         alert.setText("Access denied!");
@@ -93,11 +95,11 @@ public class Login extends KeyLogger {
                             break;
                         }
                     }
-                    UI.currUser = Database.getUser(usernameInput.getText());
+                    Main.currUser = Database.getUser(usernameInput.getText());
                     loginFrame.setVisible(false);
                     loginFrame.dispose();
-                    UI.loginStatus = true;
-                    UI.startUI();
+                    Main.loginStatus = true;
+                    Main.startUI();
                 }
             }
             startTime.clear();
@@ -106,7 +108,7 @@ public class Login extends KeyLogger {
             flightIntervals.clear();
         });
 
-        JButton back = new JButton("Back");
+        /*JButton back = new JButton("Back");
         back.addActionListener(e -> {
             startTime.clear();
             endTime.clear();
@@ -114,8 +116,10 @@ public class Login extends KeyLogger {
             flightIntervals.clear();
             loginFrame.setVisible(false);
             loginFrame.dispose();
-            UI.startUI();
-        });
+            Main.startUI();
+        });*/
+
+        JButton back = new UI().createBackButton(loginFrame);
 
         JPanel loginComponents = new JPanel();
         JPanel buttons = new JPanel();
@@ -128,6 +132,8 @@ public class Login extends KeyLogger {
         loginComponents.add(info);
         loginComponents.add(alert);
         loginComponents.add(buttons);
+
+        //JPanel loginComponents = new UI().generateUI(loginFrame, login, info);
 
         loginFrame.add(loginComponents);
         loginFrame.pack();
