@@ -11,24 +11,7 @@ public class Delete extends KeyLogger {
         deleteFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         deleteFrame.addWindowListener(new WindowOperations());
 
-        //username UI
-        /*JPanel username = new JPanel();
-        username.setLayout(new BoxLayout(username, BoxLayout.LINE_AXIS));
-        username.add(Box.createHorizontalGlue());
-        Label usernameLabel = new Label("Enter username:");
-        usernameInput = new TextField(20);
-        username.add(usernameLabel, BorderLayout.WEST);
-        username.add(usernameInput);*/
         JPanel username = UI.createUsernameUI();
-        //password UI
-        /*JPanel password = new JPanel();
-        password.setLayout(new BoxLayout(password, BoxLayout.LINE_AXIS));
-        password.add(Box.createHorizontalGlue());
-        Label passwordLabel = new Label("Enter password:");
-        Database.passwordInput = new TextField(20);
-        Database.passwordInput.addKeyListener(this);
-        password.add(passwordLabel);
-        password.add(Database.passwordInput);*/
         JPanel password = UI.createPasswordUI();
         Database.passwordInput.addKeyListener(this);
 
@@ -55,9 +38,8 @@ public class Delete extends KeyLogger {
                 alert.setText("Entered password wrong!");
             } else if(user != null){
                 boolean remove = true;
-                //TODO generalise with part from login
                 for (int i = 0; i < dwellIntervals.size(); i++) {
-                    if (dwellIntervals.get(i) > user.dwellIntervals().get(i) + 30 || dwellIntervals.get(i) < user.dwellIntervals().get(i) - 30) {
+                    if (dwellIntervals.get(i) > user.dwellIntervals().get(i) + Database.DWELL_THRESHOLD || dwellIntervals.get(i) < user.dwellIntervals().get(i) - Database.DWELL_THRESHOLD) {
                         alert.setText("Delete denied!");
                         Database.passwordInput.setText("");
                         startTime.clear();
@@ -67,7 +49,7 @@ public class Delete extends KeyLogger {
                     }
                 }
                 for(int j = 0; j < flightIntervals.size(); j++) {
-                    if (flightIntervals.get(j) > user.flightIntervals().get(j) + 30 || flightIntervals.get(j) < user.flightIntervals().get(j) - 30) {
+                    if (flightIntervals.get(j) > user.flightIntervals().get(j) + Database.FLIGHT_THRESHOLD || flightIntervals.get(j) < user.flightIntervals().get(j) - Database.FLIGHT_THRESHOLD) {
                         alert.setText("Delete denied!");
                         Database.passwordInput.setText("");
                         startTime.clear();
@@ -98,17 +80,6 @@ public class Delete extends KeyLogger {
             flightIntervals.clear();
         });
 
-        /*JButton back = new JButton("Back");
-        back.addActionListener(e -> {
-            startTime.clear();
-            endTime.clear();
-            dwellIntervals.clear();
-            flightIntervals.clear();
-            deleteFrame.setVisible(false);
-            deleteFrame.dispose();
-            Main.startUI();
-        });*/
-
         JButton back = new UI().createBackButton(deleteFrame);
 
         //add all components to panel
@@ -123,8 +94,6 @@ public class Delete extends KeyLogger {
         deleteComponents.add(info);
         deleteComponents.add(alert);
         deleteComponents.add(buttons);
-
-        //JPanel deleteComponents = new UI().generateUI(deleteFrame, delete, info);
 
         deleteFrame.add(deleteComponents);
         deleteFrame.pack();

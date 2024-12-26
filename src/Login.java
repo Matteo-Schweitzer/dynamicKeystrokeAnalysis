@@ -5,8 +5,6 @@ public class Login extends KeyLogger {
 
     Main loginFrame = new Main("Login System Demo");
     private TextField usernameInput;
-    private final int DWELL_THRESHOLD = 80;
-    private final int FLIGHT_THRESHOLD = 120;
 
     void startLoginUI() {
         loginFrame.setSize(new Dimension(700, 600));
@@ -14,24 +12,7 @@ public class Login extends KeyLogger {
         loginFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         loginFrame.addWindowListener(new WindowOperations());
 
-        //username UI
-        /*JPanel username = new JPanel();
-        username.setLayout(new BoxLayout(username, BoxLayout.LINE_AXIS));
-        username.add(Box.createHorizontalGlue());
-        Label usernameLabel = new Label("Enter username:");
-        usernameInput = new TextField(20);
-        username.add(usernameLabel, BorderLayout.WEST);
-        username.add(usernameInput);*/
         JPanel username = UI.createUsernameUI();
-        //password UI
-        /*JPanel password = new JPanel();
-        password.setLayout(new BoxLayout(password, BoxLayout.LINE_AXIS));
-        password.add(Box.createHorizontalGlue());
-        Label passwordLabel = new Label("Enter password:");
-        Database.passwordInput = new TextField(20);
-        Database.passwordInput.addKeyListener(this);
-        password.add(passwordLabel);
-        password.add(Database.passwordInput);*/
         JPanel password = UI.createPasswordUI();
         Database.passwordInput.addKeyListener(this);
 
@@ -59,9 +40,8 @@ public class Login extends KeyLogger {
                 alert.setText("Entered password wrong!");
             } else if(user != null) {
                 boolean access = true;
-                //TODO generalise with part from delete
                 for (int i = 0; i < dwellIntervals.size(); i++) {
-                    if (dwellIntervals.get(i) > user.dwellIntervals().get(i) + DWELL_THRESHOLD || dwellIntervals.get(i) < user.dwellIntervals().get(i) - DWELL_THRESHOLD) {
+                    if (dwellIntervals.get(i) > user.dwellIntervals().get(i) + Database.DWELL_THRESHOLD || dwellIntervals.get(i) < user.dwellIntervals().get(i) - Database.DWELL_THRESHOLD) {
                         alert.setText("Access denied!");
                         Database.passwordInput.setText("");
                         startTime.clear();
@@ -72,7 +52,7 @@ public class Login extends KeyLogger {
                 }
                 if(access) {
                     for(int j = 0; j < flightIntervals.size(); j++) {
-                        if (flightIntervals.get(j) > user.flightIntervals().get(j) + FLIGHT_THRESHOLD || flightIntervals.get(j) < user.flightIntervals().get(j) - FLIGHT_THRESHOLD) {
+                        if (flightIntervals.get(j) > user.flightIntervals().get(j) + Database.FLIGHT_THRESHOLD || flightIntervals.get(j) < user.flightIntervals().get(j) - Database.FLIGHT_THRESHOLD) {
                             alert.setText("Access denied!");
                             Database.passwordInput.setText("");
                             startTime.clear();
@@ -108,17 +88,6 @@ public class Login extends KeyLogger {
             flightIntervals.clear();
         });
 
-        /*JButton back = new JButton("Back");
-        back.addActionListener(e -> {
-            startTime.clear();
-            endTime.clear();
-            dwellIntervals.clear();
-            flightIntervals.clear();
-            loginFrame.setVisible(false);
-            loginFrame.dispose();
-            Main.startUI();
-        });*/
-
         JButton back = new UI().createBackButton(loginFrame);
 
         JPanel loginComponents = new JPanel();
@@ -132,8 +101,6 @@ public class Login extends KeyLogger {
         loginComponents.add(info);
         loginComponents.add(alert);
         loginComponents.add(buttons);
-
-        //JPanel loginComponents = new UI().generateUI(loginFrame, login, info);
 
         loginFrame.add(loginComponents);
         loginFrame.pack();

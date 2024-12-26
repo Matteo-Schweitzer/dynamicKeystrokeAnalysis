@@ -17,36 +17,8 @@ public class Register extends KeyLogger {
         registerFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         registerFrame.addWindowListener(new WindowOperations());
 
-        //username UI
-        /*JPanel username = new JPanel();
-        username.setLayout(new BoxLayout(username, BoxLayout.LINE_AXIS));
-        username.add(Box.createHorizontalGlue());
-        Label usernameLabel = new Label("Enter username:");
-        usernameInput = new TextField(20);
-        username.add(usernameLabel, BorderLayout.WEST);
-        username.add(usernameInput);*/
         JPanel username = UI.createUsernameUI();
-
-        //password UI
-        /*JPanel password = new JPanel();
-        password.setLayout(new BoxLayout(password, BoxLayout.LINE_AXIS));
-        password.add(Box.createHorizontalGlue());
-        Label passwordLabel = new Label("Enter password:");
-        chosenPassword = new TextField(20);
-        password.add(passwordLabel);
-        password.add(chosenPassword);*/
         JPanel password = UI.createPasswordUI();
-        //Database.passwordInput.addKeyListener(this);
-
-        //password reenter UI
-        /*JPanel passwordReenter = new JPanel();
-        passwordReenter.setLayout(new BoxLayout(passwordReenter, BoxLayout.LINE_AXIS));
-        passwordReenter.add(Box.createHorizontalGlue());
-        Label passwordReenterLabel = new Label("Enter password again:");
-        Database.passwordInput = new TextField(22);
-        Database.passwordInput.addKeyListener(this);
-        passwordReenter.add(passwordReenterLabel);
-        passwordReenter.add(Database.passwordInput);*/
         JPanel passwordReenter = UI.createPasswordReenterUI();
         Database.passwordInput.addKeyListener(this);
 
@@ -85,17 +57,6 @@ public class Register extends KeyLogger {
             startTime.clear();
             endTime.clear();
         });
-
-        /*JButton back = new JButton("Back");
-        back.addActionListener(e -> {
-            startTime.clear();
-            endTime.clear();
-            dwellIntervals.clear();
-            flightIntervals.clear();
-            registerFrame.setVisible(false);
-            registerFrame.dispose();
-            Main.startUI();
-        });*/
 
         JButton back = new UI().createBackButton(registerFrame);
 

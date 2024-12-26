@@ -8,6 +8,8 @@ public class Database {
     static List<User> users = new ArrayList<>();
     static TextField passwordInput;
     static private final String USERDATA = "src/users.txt";
+    static final int DWELL_THRESHOLD = 80;
+    static final int FLIGHT_THRESHOLD = 120;
 
     static boolean checkUsername(String usernameInput) {
         if(usernameInput.contains(" ")) {
